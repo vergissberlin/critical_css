@@ -1,0 +1,44 @@
+{
+    "name": "nemo64/critical_css",
+    "description": "Critical CSS inline rendering for TYPO3",
+    "type": "typo3-cms-extension",
+    "license": "GPL-2.0-or-later",
+    "authors": [
+        {
+            "name": "Marco Pfeiffer",
+            "email": "git@marco.zone"
+        }
+    ],
+    "require": {
+        "php": "7.0.* || 7.1.* || 7.2.*",
+        "typo3/cms-core": "8.7.*",
+        "typo3/cms-frontend": "8.7.*"
+    },
+    "require-dev": {
+        "nimut/testing-framework": "^4.1"
+    },
+    "suggest": {
+        "lochmueller/staticfilecache": "Get php out of the way before doing any frontend optimization."
+    },
+    "autoload": {
+        "psr-4": {
+            "Nemo64\\CriticalCss\\": "Classes"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Nemo64\\CriticalCss\\Tests\\": "Tests"
+        }
+    },
+    "config": {
+        "sort-packages": true,
+        "vendor-dir": ".Build/vendor",
+        "bin-dir": ".Build/bin"
+    },
+    "extra": {
+        "typo3/cms": {
+            "web-dir": ".Build/public",
+            "app-dir": ".Build"
+        }
+    }
+}
