@@ -1,0 +1,2 @@
+tt_content.stdWrap.append = TEXT
+tt_content.stdWrap.append.value = <!-- critical_css: below the fold -->

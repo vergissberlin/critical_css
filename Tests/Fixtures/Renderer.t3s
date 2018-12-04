@@ -1,0 +1,14 @@
+config {
+    # disabling no_cache is important since the used hook only runs on cached pages
+    no_cache = 0
+
+    # make the situation a little more difficult
+    absRefPrefix = /root/
+}
+
+page = PAGE
+page {
+    10 < styles.content.get
+
+    includeCSS.Styles = typo3conf/ext/critical_css/Tests/Fixtures/Styles.css
+}
