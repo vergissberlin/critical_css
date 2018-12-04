@@ -15,16 +15,6 @@ class MoveCssHook
     const MARKER_BELOW_THE_FOLD = '<!-- critical_css: below the fold -->';
 
     /**
-     * This gets magically injected when used within typoscript as userFunc.
-     * Look at the @see part to check for yourself.
-     *
-     * @var ContentObjectRenderer|null
-     * @see ContentObjectRenderer::callUserFunction
-     * @internal this is not part of the public api
-     */
-    public $cObj;
-
-    /**
      * @var string
      * @internal used to overwrite the PATH_site constant during testing
      */
