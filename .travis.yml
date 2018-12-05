@@ -3,12 +3,12 @@ language: php
 matrix:
   include:
   - {php: 7.1, env: typo3version="~8.7.11" dependencies=highest}
-  - {php: 7.1, env: typo3version="~8.7.11" dependencies=lowest}
-
   - {php: 7.2, env: typo3version="~8.7.11" dependencies=highest}
-  - {php: 7.2, env: typo3version="~8.7.11" dependencies=lowest}
-
   - {php: 7.2, env: typo3version="~9.5.0" dependencies=highest}
+
+  # I just want to know if my library works with the minimum required version in the composer.lock
+  # if another library breaks in higher php versions that's not my problem ~ but i save a few travis resources
+  - {php: 7.1, env: typo3version="~8.7.11" dependencies=lowest}
   - {php: 7.2, env: typo3version="~9.5.0" dependencies=lowest}
 
 services:
