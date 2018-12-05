@@ -58,7 +58,6 @@
             "docker rm --force --volumes `basename $PWD`_db"
         ],
         "test:functional": [
-            "rm -rf .Build/public/typo3temp/var/tests",
             "phpunit -c Tests/FunctionalTests.xml"
         ],
         "test:unit": [
