@@ -51,4 +51,20 @@ class RenderingTest extends FunctionalTestCase
             "expect link to stylesheet"
         );
     }
+
+    public function testNoCacheRendering()
+    {
+        $this->setUpFrontendRootPage(1, [
+            'EXT:critical_css/Configuration/TypoScript/BasedOnContentElement/setup.txt',
+            'EXT:critical_css/Tests/Fixtures/Renderer.t3s',
+            'EXT:critical_css/Tests/Fixtures/NoCache.t3s',
+        ]);
+        $response = $this->getFrontendResponse(1);
+        $this->assertEquals('success', $response->getStatus());
+        $this->assertNotContains(
+            '<style>@import url("' . $this->publicStylesheetPath . '") all;</style>',
+            $response->getContent(),
+            "expect link to stylesheet"
+        );
+    }
 }

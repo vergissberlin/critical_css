@@ -9,6 +9,7 @@ use Sabberworm\CSS\Value\URL;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\ContentObject\ContentObjectRenderer;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class MoveCssHook
 {
@@ -22,7 +23,12 @@ class MoveCssHook
 
     public function postCssTransform(array &$params, PageRenderer $pageRenderer)
     {
-        // TODO only run when no_cache is defined
+        /** @var TypoScriptFrontendController $tsfe */
+        $tsfe = $GLOBALS['TSFE'];
+        if ($tsfe->no_cache) {
+            return;
+        }
+
         // TODO only run when tx_criticalcss_mode is enabled in rootline
 
         // if the marker for "below the fold" does not exist, than there is nothing we can do here

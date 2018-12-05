@@ -7,20 +7,27 @@ use Nemo64\CriticalCss\Hook\MoveCssHook;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
+use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
 
 class MoveCssHookTest extends UnitTestCase
 {
     /** @var MoveCssHook */
     protected $hook;
 
+    /** @var TypoScriptFrontendController */
+    protected $tsfe;
+
     protected function setUp()
     {
         parent::setUp();
         $this->hook = new MoveCssHook();
+
+        $this->tsfe = $GLOBALS['TSFE'] = $this->createMock(TypoScriptFrontendController::class);
     }
 
     protected function tearDown()
     {
+        unset($GLOBALS['TSFE']);
         GeneralUtility::purgeInstances();
         parent::tearDown();
     }
