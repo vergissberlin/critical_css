@@ -16,10 +16,7 @@ class RenderingTest extends FunctionalTestCase
     protected function setUp()
     {
         parent::setUp();
-
-        $this->importDataSet('ntf://Database/pages.xml');
-        $this->importDataSet('ntf://Database/tt_content.xml');
-
+        $this->importDataSet(__DIR__ . '/../Fixtures/Pages.xml');
         $this->publicStylesheetPath = '/root/typo3conf/ext/critical_css/Tests/Fixtures/Styles.css?' . filemtime(__DIR__ . '/../Fixtures/Styles.css');
     }
 

@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<dataset>
+    <pages>
+        <uid>1</uid>
+        <pid>0</pid>
+        <title>Root</title>
+        <deleted>0</deleted>
+        <perms_everybody>15</perms_everybody>
+    </pages>
+    <tt_content>
+        <uid>10</uid>
+        <pid>1</pid>
+        <CType>header</CType>
+        <header>Test content</header>
+        <deleted>0</deleted>
+    </tt_content>
+
+    <pages>
+        <uid>2</uid>
+        <pid>1</pid>
+        <title>Dummy 1-2</title>
+        <deleted>0</deleted>
+        <perms_everybody>15</perms_everybody>
+    </pages>
+    <tt_content>
+        <uid>20</uid>
+        <pid>2</pid>
+        <CType>header</CType>
+        <header>Test content</header>
+        <deleted>0</deleted>
+    </tt_content>
+
+    <pages>
+        <uid>3</uid>
+        <pid>2</pid>
+        <title>Dummy 1-2-3</title>
+        <deleted>0</deleted>
+        <perms_everybody>15</perms_everybody>
+    </pages>
+    <tt_content>
+        <uid>30</uid>
+        <pid>3</pid>
+        <CType>header</CType>
+        <header>Test content</header>
+        <deleted>0</deleted>
+    </tt_content>
+
+</dataset>
