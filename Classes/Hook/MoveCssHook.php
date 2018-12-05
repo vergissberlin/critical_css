@@ -29,8 +29,6 @@ class MoveCssHook
             return;
         }
 
-        // TODO only run when tx_criticalcss_mode is enabled in rootline
-
         // if the marker for "below the fold" does not exist, than there is nothing we can do here
         $markerPosition = strrpos($pageRenderer->getBodyContent(), self::MARKER_BELOW_THE_FOLD);
         if ($markerPosition === false) {
