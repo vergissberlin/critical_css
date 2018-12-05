@@ -1,2 +1,2 @@
-.Build
-composer.lock
+/.Build
+/composer.lock

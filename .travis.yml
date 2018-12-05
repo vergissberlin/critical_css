@@ -1,0 +1,27 @@
+language: php
+
+matrix:
+  include:
+  - {php: 7.1, env: typo3version="~8.7.11" dependencies=highest}
+  - {php: 7.1, env: typo3version="~8.7.11" dependencies=lowest}
+
+  - {php: 7.2, env: typo3version="~8.7.11" dependencies=highest}
+  - {php: 7.2, env: typo3version="~8.7.11" dependencies=lowest}
+
+  - {php: 7.2, env: typo3version="~9.5.0" dependencies=highest}
+  - {php: 7.2, env: typo3version="~9.5.0" dependencies=lowest}
+
+services:
+- mysql
+
+install:
+- if [ "$dependencies" = "highest" ]; then composer require typo3/cms-core:$typo3version --no-interaction; fi
+- if [ "$dependencies" = "lowest" ]; then composer require typo3/cms-core:$typo3version --prefer-lowest --no-interaction; fi
+
+script:
+- .Build/bin/phpunit -c Tests/UnitTests.xml
+- .Build/bin/phpunit -c Tests/FunctionalTests.xml
+
+cache:
+  directories:
+  - $HOME/.composer/cache

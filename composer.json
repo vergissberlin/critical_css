@@ -10,17 +10,19 @@
         }
     ],
     "require": {
-        "php": "7.0.* || 7.1.* || 7.2.*",
+        "php": "7.1.* || 7.2.*",
         "sabberworm/php-css-parser": "^8.2",
-        "typo3/cms-core": "8.7.*",
-        "typo3/cms-frontend": "8.7.*"
+        "typo3/cms-core": "~8.7.11 || ~9.5.0",
+        "typo3/cms-frontend": "~8.7.11 || ~9.5.0"
     },
     "require-dev": {
-        "nimut/testing-framework": "^4.1",
-        "typo3/cms-fluid-styled-content": "8.7.*"
+        "nimut/testing-framework": "^4.1"
     },
     "suggest": {
         "lochmueller/staticfilecache": "Get php out of the way before doing any frontend optimization."
+    },
+    "conflict": {
+        "typo3/cms-composer-installers": "<1.4"
     },
     "autoload": {
         "psr-4": {
@@ -49,18 +51,18 @@
             "ln -s ../../../../ .Build/public/typo3conf/ext/critical_css || true"
         ],
         "db:start": [
-            "docker run --name `basename $PWD`_db -d -p3306:3306 -eMYSQL_ROOT_PASSWORD=password mysql:5.7 mysqld --character-set-server=utf8 --collation-server=utf8_general_ci",
-            "while ! docker exec `basename $PWD`_db mysql -uroot -ppassword -e 'SELECT 1' &> /dev/null; do sleep 2; done"
+            "docker run --name `basename $PWD`_db -d -p3306:3306 -eMYSQL_ALLOW_EMPTY_PASSWORD=yes mysql:5.7 mysqld --character-set-server=utf8 --collation-server=utf8_general_ci",
+            "while ! docker exec `basename $PWD`_db mysql -e 'SELECT 1' &> /dev/null; do printf . && sleep 1; done && echo "
         ],
         "db:stop": [
             "docker rm --force --volumes `basename $PWD`_db"
         ],
         "test:functional": [
             "rm -rf .Build/public/typo3temp/var/tests",
-            "typo3DatabaseName=database typo3DatabaseHost=127.0.0.1 typo3DatabaseUsername=root typo3DatabasePassword=password phpunit -c .Build/vendor/nimut/testing-framework/res/Configuration/FunctionalTests.xml Tests/Functional"
+            "phpunit -c Tests/FunctionalTests.xml"
         ],
         "test:unit": [
-            "phpunit -c .Build/vendor/nimut/testing-framework/res/Configuration/UnitTests.xml Tests/Unit"
+            "phpunit -c Tests/UnitTests.xml"
         ],
         "test": [
             "@test:unit",
