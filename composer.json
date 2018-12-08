@@ -55,7 +55,8 @@
             "while ! docker exec `basename $PWD`_db mysql -e 'SELECT 1' &> /dev/null; do printf . && sleep 1; done && echo "
         ],
         "db:stop": [
-            "docker rm --force --volumes `basename $PWD`_db"
+            "docker rm --force --volumes `basename $PWD`_db",
+            "rm -r .Build/public/typo3temp/var/tests/"
         ],
         "test:functional": [
             "phpunit -c Tests/FunctionalTests.xml"
