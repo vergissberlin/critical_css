@@ -84,6 +84,11 @@ class CriticalCssExtractorServiceTest extends UnitTestCase
                 '<i class="don\'t"></i>',
                 "[class='don\'t'] {width: 100%} [class*='don\'t'] {width: 100%} [class^='don\'t'] {width: 100%}",
             ],
+            [
+                '.multi.class {width: 100%} .multi {color: red} .class {color: blue} .test.class {color: white}',
+                '<i class="class multi"></i>',
+                '.multi.class {width: 100%} .multi {color: red} .class {color: blue}'
+            ]
         ];
     }
 

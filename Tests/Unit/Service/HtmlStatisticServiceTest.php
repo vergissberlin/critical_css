@@ -70,6 +70,17 @@ class HtmlStatisticServiceTest extends UnitTestCase
                     ],
                 ],
             ],
+            [
+                '<div class="multi class"></div>',
+                [
+                    'tagNames' => ['div'],
+                    'ids' => [],
+                    'classNames' => ['class', 'multi'],
+                    'attributes' => [
+                        'class' => ['multi class'],
+                    ],
+                ],
+            ],
         ];
     }
 
