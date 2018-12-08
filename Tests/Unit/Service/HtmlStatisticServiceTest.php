@@ -81,6 +81,18 @@ class HtmlStatisticServiceTest extends UnitTestCase
                     ],
                 ],
             ],
+            [
+                '<img src="" alt="" />',
+                [
+                    'tagNames' => ['img'],
+                    'ids' => [],
+                    'classNames' => [],
+                    'attributes' => [
+                        'alt' => [''],
+                        'src' => [''],
+                    ],
+                ],
+            ],
         ];
     }
 

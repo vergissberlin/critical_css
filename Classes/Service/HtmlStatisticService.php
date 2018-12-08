@@ -8,8 +8,8 @@ use TYPO3\CMS\Core\SingletonInterface;
 
 class HtmlStatisticService implements SingletonInterface
 {
-    private const REGEX_ATTRIBUTE = '(?<attr_name>[^>=\s]+)(="(?<attr_val1>[^"]*)"|=\'(?<attr_val2>[^\']*)\'|=(?<attr_val3>[^\s>]*))?';
-    private const REGEX_TAG = '<(?<tag_name>[^/\s>]+)(?<attr>(\s*' . self::REGEX_ATTRIBUTE . ')*)\s*>';
+    private const REGEX_ATTRIBUTE = '(?<attr_name>[^>=\s/]+)(="(?<attr_val1>[^"]*)"|=\'(?<attr_val2>[^\']*)\'|=(?<attr_val3>[^\s>]*))?';
+    private const REGEX_TAG = '<(?<tag_name>[^/\s>]+)(?<attr>(\s*' . self::REGEX_ATTRIBUTE . ')*)\s*/?>';
 
     public function createStatistic(string $html): HtmlStatistics
     {
@@ -27,7 +27,14 @@ class HtmlStatisticService implements SingletonInterface
 
             foreach ($attrMatches as $attrMatch) {
                 if (isset($attrMatch['attr_val1'])) {
-                    $attrValue = $attrMatch['attr_val1'] ?: $attrMatch['attr_val2'] ?: $attrMatch['attr_val3'];
+                    $attrValue = '';
+                    foreach (['attr_val1', 'attr_val2', 'attr_val3'] as $property) {
+                        if (isset($attrMatch[$property]) && !empty($attrMatch[$property])) {
+                            $attrValue = $attrMatch[$property];
+                            break;
+                        }
+                    }
+
                     $statistics->addAttribute($attrMatch['attr_name'], $attrValue);
                 } else {
                     $statistics->addAttribute($attrMatch['attr_name']);
