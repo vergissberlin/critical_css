@@ -99,6 +99,11 @@ class CriticalCssExtractorServiceTest extends UnitTestCase
                 '<div></div>',
                 '',
             ],
+            [
+                '* {width: 100%}',
+                '<div></div>',
+                '* {width: 100%}',
+            ],
         ];
     }
 

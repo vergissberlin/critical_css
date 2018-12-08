@@ -89,7 +89,7 @@ class CriticalCssExtractorService implements SingletonInterface
 
         $tagNames = $statistics->getTagNames();
         if ($tagNames) {
-            $string .= '(' . implode('|', array_map($quote, $tagNames)) . ')?';
+            $string .= '(\\*|' . implode('|', array_map($quote, $tagNames)) . ')?';
         }
 
         $interchangeably = [];
