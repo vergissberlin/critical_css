@@ -25,6 +25,13 @@ class HtmlStatistics
         return isset($this->tagNames[$tagName]);
     }
 
+    public function getTagNames(): array
+    {
+        $tagNames = $this->tagNames;
+        sort($tagNames);
+        return $tagNames;
+    }
+
     private function addId(string $id): void
     {
         $this->ids[$id] = $id;
@@ -33,6 +40,13 @@ class HtmlStatistics
     public function hasId(string $id): bool
     {
         return isset($this->ids[$id]);
+    }
+
+    public function getIds(): array
+    {
+        $ids = $this->ids;
+        sort($ids);
+        return $ids;
     }
 
     private function addClassName(string $className): void
@@ -45,6 +59,13 @@ class HtmlStatistics
     {
         $className = mb_strtolower($className);
         return isset($this->classNames[$className]);
+    }
+
+    public function getClassNames(): array
+    {
+        $classNames = $this->classNames;
+        sort($classNames);
+        return $classNames;
     }
 
     public function addAttribute(string $name, string $value = ''): void
@@ -75,13 +96,24 @@ class HtmlStatistics
         return isset($this->attributes[$name]);
     }
 
+    public function getAttributes(): array
+    {
+        $attributes = $this->attributes;
+        ksort($attributes);
+        foreach ($attributes as &$attributeValues) {
+            sort($attributeValues);
+        }
+
+        return $attributes;
+    }
+
     public function toArray(): array
     {
         return [
-            'tagNames' => array_values($this->tagNames),
+            'tagNames' => $this->getTagNames(),
             'ids' => array_values($this->ids),
-            'classNames' => array_values($this->classNames),
-            'attributes' => array_map('array_values', $this->attributes),
+            'classNames' => $this->getClassNames(),
+            'attributes' => $this->getAttributes(),
         ];
     }
 }

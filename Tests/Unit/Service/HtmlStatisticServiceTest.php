@@ -28,6 +28,15 @@ class HtmlStatisticServiceTest extends UnitTestCase
     {
         return [
             [
+                '<div></div>',
+                [
+                    'tagNames' => ['div'],
+                    'ids' => [],
+                    'classNames' => [],
+                    'attributes' => [],
+                ],
+            ],
+            [
                 '<div class="container"></div>',
                 [
                     'tagNames' => ['div'],
@@ -43,10 +52,21 @@ class HtmlStatisticServiceTest extends UnitTestCase
                 [
                     'tagNames' => ['div'],
                     'ids' => ['main'],
-                    'classNames' => ['container', 'row', 'col-sm-12'],
+                    'classNames' => ['col-sm-12', 'container', 'row'],
                     'attributes' => [
                         'id' => ['main'],
-                        'class' => ['container', 'row', 'col-sm-12'],
+                        'class' => ['col-sm-12', 'container', 'row'],
+                    ],
+                ],
+            ],
+            [
+                '<div hi></div>',
+                [
+                    'tagNames' => ['div'],
+                    'ids' => [],
+                    'classNames' => [],
+                    'attributes' => [
+                        'hi' => [''],
                     ],
                 ],
             ],
