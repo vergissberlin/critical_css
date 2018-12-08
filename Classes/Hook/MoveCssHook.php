@@ -65,8 +65,9 @@ class MoveCssHook
 
             $css = (new Parser(file_get_contents($this->pathSite . $file['file'])))->parse();
             $htmlStatistics = $htmlStatisticService->createStatistic(substr($pageRenderer->getBodyContent(), 0, $markerPosition));
-            $criticalCss = $criticalCssExtractorService->extract($css, $htmlStatistics);
-            $pageRenderer->addCssInlineBlock($file['file'], $criticalCss->render(OutputFormat::createCompact()), false, false);
+            $criticalCssExtractorService->extract($css, $htmlStatistics);
+            $outputFormat = OutputFormat::createCompact()->set('semicolonAfterLastRule', false);
+            $pageRenderer->addCssInlineBlock($file['file'], $css->render($outputFormat), false, false);
         }
 
         $pageRenderer->setBodyContent(substr_replace(

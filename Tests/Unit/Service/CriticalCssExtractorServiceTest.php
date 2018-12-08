@@ -87,8 +87,18 @@ class CriticalCssExtractorServiceTest extends UnitTestCase
             [
                 '.multi.class {width: 100%} .multi {color: red} .class {color: blue} .test.class {color: white}',
                 '<i class="class multi"></i>',
-                '.multi.class {width: 100%} .multi {color: red} .class {color: blue}'
-            ]
+                '.multi.class {width: 100%} .multi {color: red} .class {color: blue}',
+            ],
+            [
+                'div {animation: blink} @keyframes blink {0% {color: red} 100% {color: blue}}',
+                '<div></div>',
+                '',
+            ],
+            [
+                '@media print {div{color: black}}',
+                '<div></div>',
+                '',
+            ],
         ];
     }
 
@@ -101,8 +111,8 @@ class CriticalCssExtractorServiceTest extends UnitTestCase
         $cssParser = new Parser($css);
         $css = $cssParser->parse();
 
-        $parsedCss = $this->service->extract($css, $html);
+        $this->service->extract($css, $html);
         $outputFormat = OutputFormat::create()->set('spaceBetweenBlocks', ' ')->set('semicolonAfterLastRule', false);
-        $this->assertEquals($expectedCss, $parsedCss->render($outputFormat));
+        $this->assertEquals($expectedCss, $css->render($outputFormat));
     }
 }

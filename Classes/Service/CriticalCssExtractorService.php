@@ -5,9 +5,13 @@ namespace Nemo64\CriticalCss\Service;
 
 use Nemo64\CriticalCss\Domain\Model\HtmlStatistics;
 use Sabberworm\CSS\CSSList\AtRuleBlockList;
+use Sabberworm\CSS\CSSList\CSSList;
 use Sabberworm\CSS\CSSList\Document;
+use Sabberworm\CSS\CSSList\KeyFrame;
 use Sabberworm\CSS\Property\Selector;
+use Sabberworm\CSS\Rule\Rule;
 use Sabberworm\CSS\RuleSet\DeclarationBlock;
+use Sabberworm\CSS\RuleSet\RuleSet;
 use TYPO3\CMS\Core\SingletonInterface;
 
 class CriticalCssExtractorService implements SingletonInterface
@@ -17,40 +21,62 @@ class CriticalCssExtractorService implements SingletonInterface
      *
      * @param Document $css The css document to extract the critical css from
      * @param HtmlStatistics $statistics
-     *
-     * @return Document with only the css required for the passed html
      */
-    public function extract(Document $css, HtmlStatistics $statistics): Document
+    public function extract(Document $css, HtmlStatistics $statistics)
     {
-        $result = clone $css;
         $selectorPattern = $this->createSelectorPattern($statistics);
+        $this->filter($css, $selectorPattern);
+    }
 
-        /** @var DeclarationBlock $declarationBlock */
-        foreach ($result->getAllDeclarationBlocks() as $declarationBlock) {
-            if ($this->matches($declarationBlock, $selectorPattern)) {
+    private function filter(CSSList $list, string $selectorPattern)
+    {
+        foreach ($list->getContents() as $content) {
+            if ($content instanceof KeyFrame) {
+                $list->remove($content);
                 continue;
             }
 
-            $result->remove($declarationBlock);
-        }
+            if ($content instanceof DeclarationBlock) {
+                $matchingSelectors = array_filter($content->getSelectors(), function (Selector $selector) use ($selectorPattern) {
+                    return preg_match($selectorPattern, $selector->getSelector());
+                });
 
-        foreach ($result->getContents() as $allRuleSet) {
-            if ($allRuleSet instanceof AtRuleBlockList) {
-                foreach ($allRuleSet->getContents() as $content) {
-                    if ($content instanceof DeclarationBlock) {
-                        if (!$this->matches($content, $selectorPattern)) {
-                            $allRuleSet->remove($content);
-                        }
-                    }
+                if (!empty($matchingSelectors)) {
+                    $content->setSelectors($matchingSelectors);
+                } else {
+                    $list->remove($content);
+                    continue;
+                }
+            }
+
+            if ($content instanceof RuleSet) {
+                $this->filterRuleSet($content);
+                if (empty($content->getRules())) {
+                    $list->remove($content);
+                    continue;
+                }
+            }
+
+            if ($content instanceof AtRuleBlockList) {
+                if ($content->atRuleName() === 'media' && $content->atRuleArgs() === 'print') {
+                    $list->remove($content);
+                    continue;
                 }
 
-                if (empty($allRuleSet->getContents())) {
-                    $result->remove($allRuleSet);
+                $this->filter($content, $selectorPattern);
+                if (empty($content->getContents())) {
+                    $list->remove($content);
+                    continue;
                 }
             }
         }
+    }
 
-        return $result;
+    private function filterRuleSet(RuleSet $ruleSet)
+    {
+        $ruleSet->removeRule('animation-');
+        $ruleSet->removeRule('transition-');
+        $ruleSet->removeRule('page-break-');
     }
 
     private function createSelectorPattern(HtmlStatistics $statistics): string

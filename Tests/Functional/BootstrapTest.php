@@ -31,6 +31,6 @@ class BootstrapTest extends FunctionalTestCase
         $this->assertEquals('success', $response->getStatus());
 
         $content = $response->getContent();
-        $this->assertLessThan(4000, strpos($content, '</style>') - strpos($content, '<style type="text/css">'));
+        $this->assertLessThan(2000, strpos($content, '</style>') - strpos($content, '<style type="text/css">'));
     }
 }
