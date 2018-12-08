@@ -4,6 +4,7 @@ namespace Nemo64\CriticalCss\Service;
 
 
 use Nemo64\CriticalCss\Domain\Model\HtmlStatistics;
+use Sabberworm\CSS\CSSList\AtRuleBlockList;
 use Sabberworm\CSS\CSSList\Document;
 use Sabberworm\CSS\Property\Selector;
 use Sabberworm\CSS\RuleSet\DeclarationBlock;
@@ -31,6 +32,22 @@ class CriticalCssExtractorService implements SingletonInterface
             }
 
             $result->remove($declarationBlock);
+        }
+
+        foreach ($result->getContents() as $allRuleSet) {
+            if ($allRuleSet instanceof AtRuleBlockList) {
+                foreach ($allRuleSet->getContents() as $content) {
+                    if ($content instanceof DeclarationBlock) {
+                        if (!$this->matches($content, $selectorPattern)) {
+                            $allRuleSet->remove($content);
+                        }
+                    }
+                }
+
+                if (empty($allRuleSet->getContents())) {
+                    $result->remove($allRuleSet);
+                }
+            }
         }
 
         return $result;

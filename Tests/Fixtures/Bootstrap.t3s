@@ -1,0 +1,10 @@
+page {
+    includeCSS.bootstrap = vendor/twbs/bootstrap/dist/css/bootstrap.css
+
+    10 >
+    10 = TEXT
+    10.value (
+        <div class="container"><div class="row"><div class="col"></div></div></div>
+        <!-- critical_css: below the fold -->
+    )
+}

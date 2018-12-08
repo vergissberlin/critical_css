@@ -3,6 +3,10 @@
 namespace Nemo64\CriticalCss\Hook;
 
 
+use Nemo64\CriticalCss\Service\CriticalCssExtractorService;
+use Nemo64\CriticalCss\Service\HtmlStatisticService;
+use Sabberworm\CSS\OutputFormat;
+use Sabberworm\CSS\Parser;
 use Sabberworm\CSS\Property\Import;
 use Sabberworm\CSS\Value\CSSString;
 use Sabberworm\CSS\Value\URL;
@@ -50,12 +54,19 @@ class MoveCssHook
         }
 
         $cObject = GeneralUtility::makeInstance(ContentObjectRenderer::class);
+        $criticalCssExtractorService = GeneralUtility::makeInstance(CriticalCssExtractorService::class);
+        $htmlStatisticService = GeneralUtility::makeInstance(HtmlStatisticService::class);
 
         $inlineStyles = "";
         foreach ($files as $file) {
             $filename = GeneralUtility::createVersionNumberedFilename($file['file']);
             $import = new Import(new URL(new CSSString($filename)), $file['media']);
             $inlineStyles .= "\n" . $cObject->wrap("<style>$import</style>", $file['allWrap'], $file['splitChar']);
+
+            $css = (new Parser(file_get_contents($this->pathSite . $file['file'])))->parse();
+            $htmlStatistics = $htmlStatisticService->createStatistic(substr($pageRenderer->getBodyContent(), 0, $markerPosition));
+            $criticalCss = $criticalCssExtractorService->extract($css, $htmlStatistics);
+            $pageRenderer->addCssInlineBlock($file['file'], $criticalCss->render(OutputFormat::createCompact()), false, false);
         }
 
         $pageRenderer->setBodyContent(substr_replace(
