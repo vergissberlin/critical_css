@@ -64,4 +64,25 @@ class RenderingTest extends FunctionalTestCase
             "expect link to stylesheet"
         );
     }
+
+    public function testStylePositioning()
+    {
+        $this->setUpFrontendRootPage(1, [
+            'EXT:critical_css/Tests/Fixtures/Renderer.t3s',
+            'EXT:critical_css/Tests/Fixtures/Positioning.t3s',
+        ]);
+        $response = $this->getFrontendResponse(1);
+        $this->assertEquals('success', $response->getStatus());
+        $content = $response->getContent();
+        $style = '<style>@import url("' . $this->publicStylesheetPath . '") all;</style>';
+
+        $firstContentElementPosition = strpos($content, 'first content element');
+        $secondContentElementPosition = strpos($content, 'second content element');
+        $stylePosition = strpos($content, $style);
+        $this->assertGreaterThan(0, $firstContentElementPosition, 'firstContentElementPosition');
+        $this->assertGreaterThan(0, $secondContentElementPosition, 'secondContentElementPosition');
+        $this->assertGreaterThan(0, $stylePosition, 'stylePosition');
+        $this->assertGreaterThan($firstContentElementPosition, $stylePosition, 'first content element before style');
+        $this->assertLessThan($secondContentElementPosition, $stylePosition, 'second content element after style');
+    }
 }

@@ -74,7 +74,7 @@ class MoveCssHook
             $pageRenderer->getBodyContent(),
             $inlineStyles,
             $markerPosition,
-            $markerPosition + strlen(self::MARKER_BELOW_THE_FOLD)
+            strlen(self::MARKER_BELOW_THE_FOLD)
         ));
     }
 }
