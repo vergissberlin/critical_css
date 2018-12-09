@@ -3,6 +3,7 @@
 namespace Nemo64\CriticalCss\Tests\Functional;
 
 
+use Nemo64\CriticalCss\Hook\MoveCssHook;
 use Nimut\TestingFramework\TestCase\FunctionalTestCase;
 
 class RenderingTest extends FunctionalTestCase
@@ -84,5 +85,23 @@ class RenderingTest extends FunctionalTestCase
         $this->assertGreaterThan(0, $stylePosition, 'stylePosition');
         $this->assertGreaterThan($firstContentElementPosition, $stylePosition, 'first content element before style');
         $this->assertLessThan($secondContentElementPosition, $stylePosition, 'second content element after style');
+    }
+
+    public function testMarkerRenderedOnce()
+    {
+        $this->setUpFrontendRootPage(1, [
+            'EXT:critical_css/Configuration/TypoScript/BasedOnContentElement/setup.txt',
+            'EXT:critical_css/Tests/Fixtures/Renderer.t3s',
+            'EXT:critical_css/Tests/Fixtures/NoCache.t3s', // prevent the marker from being replaced
+        ]);
+
+        $this->getDatabaseConnection()->insertArray('tt_content', ['pid' => 1, 'CType' => 'header']);
+        $this->getDatabaseConnection()->insertArray('tt_content', ['pid' => 1, 'CType' => 'header']);
+        $this->getDatabaseConnection()->insertArray('tt_content', ['pid' => 1, 'CType' => 'header']);
+
+        $response = $this->getFrontendResponse(1);
+        $this->assertEquals('success', $response->getStatus());
+        $matches = substr_count($response->getContent(), MoveCssHook::MARKER_BELOW_THE_FOLD);
+        $this->assertEquals(1, $matches);
     }
 }

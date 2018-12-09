@@ -1,2 +1,9 @@
-tt_content.stdWrap.append = TEXT
-tt_content.stdWrap.append.value = <!-- critical_css: below the fold -->
+tt_content.stdWrap.append = COA
+tt_content.stdWrap.append {
+    10 = TEXT
+    10.value = <!-- critical_css: below the fold -->
+    10.if.isFalse.data = REGISTER:critical_marker_rendered
+
+    20 = LOAD_REGISTER
+    20.critical_marker_rendered = 1
+}
