@@ -104,6 +104,10 @@ class MoveCssHook
 
     private function createInlineStyle(array $file, HtmlStatistics $htmlStatistics): PromiseInterface
     {
+        if (preg_match('#fonts.googleapis.com#', $file['file'])) {
+            return new FulfilledPromise('');
+        }
+
         if (preg_match('#^https?#', $file['file'])) {
             $promise = $this->requestFile($file);
         } else if (file_exists($this->pathSite . $file['file'])) {
