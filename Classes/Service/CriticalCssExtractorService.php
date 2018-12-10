@@ -121,7 +121,8 @@ class CriticalCssExtractorService implements SingletonInterface
 
         // pseudo selectors can't be correctly handled
         // TODO this won't parse selectors like :matches(foo > bar) correctly because of the space within them
-        $interchangeably[] = ':[^\.\#\s]+';
+        $interchangeably[] = ':(?!active|focus|hover)[^\.\#\s:]+';
+        $interchangeably[] = '::[^\.\#\s:]+';
 
         if ($interchangeably) {
             $string .= '(' . implode('|', $interchangeably) . ')*';

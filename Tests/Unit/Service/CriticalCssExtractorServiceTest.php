@@ -55,11 +55,6 @@ class CriticalCssExtractorServiceTest extends UnitTestCase
                 'div.cls1 {width: 100%} div[class="cls1"] {height: 100%}',
             ],
             [
-                'a {color: red} a:hover {color: blue} .some:hover {color: black}',
-                '<a href="#"></a>',
-                'a {color: red} a:hover {color: blue}',
-            ],
-            [
                 'ul > li {list-style: none} ol > li {list-style: none}',
                 '<ul><li></li></ul>',
                 'ul > li {list-style: none}',
@@ -103,6 +98,11 @@ class CriticalCssExtractorServiceTest extends UnitTestCase
                 '* {width: 100%}',
                 '<div></div>',
                 '* {width: 100%}',
+            ],
+            [
+                'a {color: blue} a:link {color: purple} a:visited {color: green} a:hover {color: red} a:active {color: black} a:focus {color: white}',
+                '<a href=""></a>',
+                'a {color: blue} a:link {color: purple} a:visited {color: green}',
             ],
         ];
     }
