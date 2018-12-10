@@ -134,16 +134,4 @@ class CriticalCssExtractorService implements SingletonInterface
 
         return "#^(\s*[>~+]?\s*$string)+$#uisS";
     }
-
-    private function matches(DeclarationBlock $declarationBlock, string $selectorParttern): bool
-    {
-        /** @var Selector $selector */
-        foreach ($declarationBlock->getSelectors() as $selector) {
-            if (preg_match($selectorParttern, $selector->getSelector())) {
-                return true;
-            }
-        }
-
-        return false;
-    }
 }
