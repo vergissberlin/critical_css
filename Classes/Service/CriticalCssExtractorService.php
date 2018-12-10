@@ -77,6 +77,7 @@ class CriticalCssExtractorService implements SingletonInterface
         $ruleSet->removeRule('animation-');
         $ruleSet->removeRule('transition-');
         $ruleSet->removeRule('page-break-');
+        $ruleSet->removeRule('cursor');
     }
 
     private function createSelectorPattern(HtmlStatistics $statistics): string
