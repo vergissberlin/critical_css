@@ -31,6 +31,24 @@ class BootstrapTest extends FunctionalTestCase
         $this->assertEquals('success', $response->getStatus());
 
         $content = $response->getContent();
-        $this->assertLessThan(2000, strpos($content, '</style>') - strpos($content, '<style type="text/css">'));
+        $size = strpos($content, '</style>') - strpos($content, '<style type="text/css">');
+        $this->assertGreaterThan(1000, $size, $content);
+        $this->assertLessThan(2000, $size, $content);
+    }
+
+    public function testExternalBootstrapLayout()
+    {
+        $this->setUpFrontendRootPage(1, [
+            'EXT:critical_css/Tests/Fixtures/Renderer.t3s',
+            'EXT:critical_css/Tests/Fixtures/BootstrapExternal.t3s',
+        ]);
+        $response = $this->getFrontendResponse(1);
+        $this->assertEquals('success', $response->getStatus());
+
+        $content = $response->getContent();
+        $this->assertContains('bootstrapcdn.com', $content, $content);
+        $size = strpos($content, '</style>') - strpos($content, '<style type="text/css">');
+        $this->assertGreaterThan(1000, $size, $content);
+        $this->assertLessThan(2000, $size, $content);
     }
 }

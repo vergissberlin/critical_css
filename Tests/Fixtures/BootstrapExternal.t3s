@@ -1,0 +1,13 @@
+page {
+    includeCSS.bootstrap = https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css
+    includeCSS.bootstrap.external = 1
+    includeCSS.bootstrap.disableCompression = 1
+    includeCSS.bootstrap.excludeFromConcatenation = 1
+
+    10 >
+    10 = TEXT
+    10.value (
+        <div class="container"><div class="row"><div class="col"></div></div></div>
+        <!-- critical_css: below the fold -->
+    )
+}
