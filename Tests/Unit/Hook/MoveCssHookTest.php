@@ -77,7 +77,7 @@ class MoveCssHookTest extends UnitTestCase
         $params = [
             'cssFiles' => [
                 [
-                    'file' => 'https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css',
+                    'file' => 'http://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css',
                     'rel' => 'stylesheet',
                     'media' => 'all',
                     'title' => '',
@@ -96,7 +96,7 @@ class MoveCssHookTest extends UnitTestCase
 
         $guzzle->expects($this->once())
             ->method('__call')
-            ->with('getAsync', ['https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css'])
+            ->with('getAsync', ['http://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css'])
             ->willReturn(new FulfilledPromise(new Response(200, [], 'body {color: red}')))
         ;
 
@@ -112,7 +112,7 @@ class MoveCssHookTest extends UnitTestCase
         // the comment should be replaced
         $pageRenderer->expects($this->once())
             ->method('setBodyContent')
-            ->with("\n<style>@import url(\"https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css\") all;</style>")
+            ->with("\n<style>@import url(\"http://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css\") all;</style>")
         ;
 
         $this->hook->postCssTransform($params, $pageRenderer);
