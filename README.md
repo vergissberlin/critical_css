@@ -35,3 +35,14 @@ This entire process is quiet fast even against huge frameworks like bootstrap an
 - Make sure there is nothing but css blocking the first paint or else this optimization is useless
 - Make sure that your site isn't delivered via php since that will probably be the biggest performance improvement you can do. I recommend [lochmueller/staticfilecache](https://github.com/lochmueller/staticfilecache) since it has no platform dependencies and is very transparent. But other strategies are fine too. 
 
+## contributing
+
+### running the tests
+
+The easiest way to run the test suite is by having docker installed and using the following commands:
+
+- `composer db:start` which starts a docker image for a mysql database. This is required for functional tests.
+- `composer test` runs unit and functional test suites. You can run them separately by using `test:unit` or `test:functional`. You can also pass filters using `composer test:unit -- --filter External`.
+- `composer db:stop` will stop and remove the database again.
+
+You can of course run them without docker if you have a database locally but then you'll have to compose your tests commands manually ;)
