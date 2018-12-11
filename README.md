@@ -33,5 +33,5 @@ This entire process is quiet fast even against huge frameworks like bootstrap an
 
 - This should be one of the last optimizations you do
 - Make sure there is nothing but css blocking the first paint or else this optimization is useless
-- Make sure that your site isn't delivered via php since that will probably be the biggest performance improvement you can do. I recommend [lochmueller/staticfilecache](https://github.com/lochmueller/staticfilecache) since it has no platform dependencies and also a nice interface of why what pages are actually correctly cached and which might have user int objects preventing proper caching.
+- Make sure that your site isn't delivered via php since that will probably be the biggest performance improvement you can do. I recommend [lochmueller/staticfilecache](https://github.com/lochmueller/staticfilecache) since it has no platform dependencies and is very transparent. But other strategies are fine too. 
 
