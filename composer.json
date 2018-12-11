@@ -21,6 +21,7 @@
     },
     "require-dev": {
         "nimut/testing-framework": "^4.1",
+        "phpunit/phpunit": "^6.5",
         "twbs/bootstrap": "^4.1"
     },
     "suggest": {
