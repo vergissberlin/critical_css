@@ -18,3 +18,20 @@ This extension will then use sophisticated regular expressions to create a stati
 of what elements/attributes/classes/ids are used up until the marker.
 Then all css files are parsed using [sabberworm/php-css-parser](https://github.com/sabberworm/PHP-CSS-Parser)
 and all css selectors are matched against and reduced by the statistic created earlier. 
+
+This entire process is quiet fast even against huge frameworks like bootstrap and results in just 2-3 kb of inline css.
+
+## things you should know
+
+- If the "below the fold" marker isn't present the extension will do nothing
+- The inlined css is just a good guess of what you'll need. There is no browser selector matching at work. It guesses quiet good though...
+- All animations/transitions as well as hover/focus effects are removed from the inline css since they aren't really important for the (hopefully at most) 1 second you'll have to wait until you get the real css 
+- external stylesheets are also downloaded and inlined (TODO create a good way to create exceptions)
+- google fonts is currently a hardcoded exception from inlining since they deliver different fonts via user agent
+
+## when should i consider using this extension (or alternatives, i'm not judging)
+
+- This should be one of the last optimizations you do
+- Make sure there is nothing but css blocking the first paint or else this optimization is useless
+- Make sure that your site isn't delivered via php since that will probably be the biggest performance improvement you can do. I recommend [lochmueller/staticfilecache](https://github.com/lochmueller/staticfilecache) since it has no platform dependencies and also a nice interface of why what pages are actually correctly cached and which might have user int objects preventing proper caching.
+
