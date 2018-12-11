@@ -36,22 +36,27 @@ class MoveCssHookTest extends UnitTestCase
         parent::tearDown();
     }
 
+    protected static function createCssFileDefinition(string $file, bool $process = true, bool $forceOnTop = false)
+    {
+        return [
+            'file' => $file,
+            'rel' => 'stylesheet',
+            'media' => 'all',
+            'title' => '',
+            'compress' => $process,
+            'forceOnTop' => $forceOnTop,
+            'allWrap' => '',
+            'excludeFromConcatenation' => !$process,
+            'splitChar' => '|',
+            'inline' => false,
+        ];
+    }
+
     public function testFileMovement()
     {
         $params = [
             'cssFiles' => [
-                [
-                    'file' => 'typo3conf/ext/critical_css/Tests/Fixtures/Styles.css',
-                    'rel' => 'stylesheet',
-                    'media' => 'all',
-                    'title' => '',
-                    'compress' => true,
-                    'forceOnTop' => false,
-                    'allWrap' => '',
-                    'excludeFromConcatenation' => false,
-                    'splitChar' => '|',
-                    'inline' => false,
-                ],
+                self::createCssFileDefinition('typo3conf/ext/critical_css/Tests/Fixtures/Styles.css', true),
             ],
         ];
 
@@ -76,18 +81,7 @@ class MoveCssHookTest extends UnitTestCase
     {
         $params = [
             'cssFiles' => [
-                [
-                    'file' => 'http://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css',
-                    'rel' => 'stylesheet',
-                    'media' => 'all',
-                    'title' => '',
-                    'compress' => false,
-                    'forceOnTop' => false,
-                    'allWrap' => '',
-                    'excludeFromConcatenation' => true,
-                    'splitChar' => '|',
-                    'inline' => false,
-                ],
+                self::createCssFileDefinition('http://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css', false),
             ],
         ];
 
@@ -113,6 +107,35 @@ class MoveCssHookTest extends UnitTestCase
         $pageRenderer->expects($this->once())
             ->method('setBodyContent')
             ->with("\n<style>@import url(\"http://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css\") all;</style>")
+        ;
+
+        $this->hook->postCssTransform($params, $pageRenderer);
+        $this->assertEquals(['cssFiles' => []], $params);
+    }
+
+    public function testForceOnTop()
+    {
+        $params = [
+            'cssFiles' => [
+                self::createCssFileDefinition('typo3conf/ext/critical_css/Tests/Fixtures/Styles.css', false, false),
+                self::createCssFileDefinition('typo3conf/ext/critical_css/Tests/Fixtures/Styles2.css', false, true),
+            ],
+        ];
+
+        $pageRenderer = $this->createMock(PageRenderer::class);
+
+        $pageRenderer->expects($this->atLeastOnce())
+            ->method('getBodyContent')
+            ->willReturn('<!-- critical_css: below the fold -->')
+        ;
+
+        // the comment should be replaced
+        $pageRenderer->expects($this->once())
+            ->method('setBodyContent')
+            ->with(
+                "\n<style>@import url(\"typo3conf/ext/critical_css/Tests/Fixtures/Styles2.css\") all;</style>"
+                . "\n<style>@import url(\"typo3conf/ext/critical_css/Tests/Fixtures/Styles.css\") all;</style>"
+            )
         ;
 
         $this->hook->postCssTransform($params, $pageRenderer);

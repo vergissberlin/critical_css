@@ -66,12 +66,18 @@ class MoveCssHook
                     continue;
                 }
 
-                $entries[] = [
+                $entry = [
                     'file' => $file,
                     'category' => $category,
                     'categoryIndex' => $index,
                     'inlinePromise' => $this->createInlineStyle($file, $htmlStatistics),
                 ];
+
+                if ($file['forceOnTop']) {
+                    array_unshift($entries, $entry);
+                } else {
+                    array_push($entries, $entry);
+                }
             }
         }
 
