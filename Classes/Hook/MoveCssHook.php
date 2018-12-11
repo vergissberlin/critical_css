@@ -10,8 +10,11 @@ use GuzzleHttp\Promise\PromiseInterface;
 use GuzzleHttp\Promise\RejectedPromise;
 use GuzzleHttp\Psr7\Response;
 use Kevinrob\GuzzleCache\CacheMiddleware;
+use Kevinrob\GuzzleCache\KeyValueHttpHeader;
 use Kevinrob\GuzzleCache\Storage\Psr16CacheStorage;
 use Kevinrob\GuzzleCache\Strategy\PrivateCacheStrategy;
+use Kevinrob\GuzzleCache\Strategy\PublicCacheStrategy;
+use Nemo64\CriticalCss\Cache\CacheStorageAdapter;
 use Nemo64\CriticalCss\Cache\Typo3CacheToPsr16Adapter;
 use Nemo64\CriticalCss\Domain\Model\HtmlStatistics;
 use Nemo64\CriticalCss\Service\CriticalCssExtractorService;
@@ -136,11 +139,20 @@ class MoveCssHook
 
     private function requestFile(array $file): PromiseInterface
     {
-        $parseResponse = function (Response $response) {
-            return $response->getBody()->getContents();
-        };
+        $promise = $this->getGuzzleClient()->getAsync($file['file'])
+            ->then(function (Response $response) {
 
-        return $this->getGuzzleClient()->getAsync($file['file'])->then($parseResponse);
+                // if the cache is not public than assume it is a bad idea to deliver it
+                $cacheControl = new KeyValueHttpHeader($response->getHeader('Cache-Control'));
+                if (!$cacheControl->has('public')) {
+                    return '';
+                }
+
+                return $response->getBody()->getContents();
+            })
+        ;
+
+        return $promise;
     }
 
     private function getGuzzleClient(): Client
@@ -150,9 +162,8 @@ class MoveCssHook
         }
 
         $handlerStack = HandlerStack::create();
-        $cache = GeneralUtility::makeInstance(Typo3CacheToPsr16Adapter::class, 'critical_css_download');
-        $cacheStorage = GeneralUtility::makeInstance(Psr16CacheStorage::class, $cache);
-        $cacheStrategy = GeneralUtility::makeInstance(PrivateCacheStrategy::class, $cacheStorage, 3600);
+        $cache = GeneralUtility::makeInstance(CacheStorageAdapter::class, 'critical_css_download');
+        $cacheStrategy = GeneralUtility::makeInstance(PrivateCacheStrategy::class, $cache);
         $middleware = GeneralUtility::makeInstance(CacheMiddleware::class, $cacheStrategy);
         $handlerStack->push($middleware, 'cache');
 

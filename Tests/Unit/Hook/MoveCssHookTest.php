@@ -6,7 +6,7 @@ namespace Nemo64\CriticalCss\Tests\Unit\Hook;
 use GuzzleHttp\Client;
 use GuzzleHttp\Promise\FulfilledPromise;
 use GuzzleHttp\Psr7\Response;
-use Nemo64\CriticalCss\Cache\Typo3CacheToPsr16Adapter;
+use Nemo64\CriticalCss\Cache\CacheStorageAdapter;
 use Nemo64\CriticalCss\Hook\MoveCssHook;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
 use PHPUnit\Framework\MockObject\MockObject;
@@ -103,14 +103,14 @@ class MoveCssHookTest extends UnitTestCase
 
         $guzzle = $this->createMock(Client::class);
         GeneralUtility::addInstance(Client::class, $guzzle);
+        $cacheStorageAdapter = $this->createMock(CacheStorageAdapter::class);
+        GeneralUtility::addInstance(CacheStorageAdapter::class, $cacheStorageAdapter);
 
         $guzzle->expects($this->once())
             ->method('__call')
             ->with('getAsync', ['http://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css'])
             ->willReturn(new FulfilledPromise(new Response(200, [], 'body {color: red}')))
         ;
-
-        GeneralUtility::addInstance(Typo3CacheToPsr16Adapter::class, $this->createMock(Typo3CacheToPsr16Adapter::class));
 
         $pageRenderer = $this->createMock(PageRenderer::class);
         $this->assertStylesheets(['http://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css'], $pageRenderer);
