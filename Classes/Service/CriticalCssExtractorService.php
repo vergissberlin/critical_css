@@ -74,10 +74,21 @@ class CriticalCssExtractorService implements SingletonInterface
 
     private function filterRuleSet(RuleSet $ruleSet)
     {
+        $ruleSet->removeRule('-webkit-animation-');
+        $ruleSet->removeRule('-moz-animation-');
         $ruleSet->removeRule('animation-');
+
+        $ruleSet->removeRule('-webkit-transition-');
+        $ruleSet->removeRule('-moz-transition-');
         $ruleSet->removeRule('transition-');
+
         $ruleSet->removeRule('page-break-');
         $ruleSet->removeRule('cursor');
+
+        $ruleSet->removeRule('-webkit-user-select');
+        $ruleSet->removeRule('-moz-user-select');
+        $ruleSet->removeRule('-ms-user-select');
+        $ruleSet->removeRule('user-select');
     }
 
     private function createSelectorPattern(HtmlStatistics $statistics): string
