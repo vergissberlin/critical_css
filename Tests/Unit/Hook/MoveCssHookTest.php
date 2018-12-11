@@ -9,6 +9,7 @@ use GuzzleHttp\Psr7\Response;
 use Nemo64\CriticalCss\Cache\Typo3CacheToPsr16Adapter;
 use Nemo64\CriticalCss\Hook\MoveCssHook;
 use Nimut\TestingFramework\TestCase\UnitTestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use TYPO3\CMS\Core\Page\PageRenderer;
 use TYPO3\CMS\Core\Utility\GeneralUtility;
 use TYPO3\CMS\Frontend\Controller\TypoScriptFrontendController;
@@ -52,6 +53,31 @@ class MoveCssHookTest extends UnitTestCase
         ];
     }
 
+    protected function assertStylesheets(array $stylesheets, MockObject $pageRenderer)
+    {
+        $expectedBodyContent = '';
+        $expectedHeaderData = [];
+        foreach ($stylesheets as $stylesheet) {
+            $expectedBodyContent .= "\n<style>@import url(\"$stylesheet\") all;</style>";
+            $expectedHeaderData[] = ['<link rel="preload" href="' . htmlspecialchars($stylesheet) . '" as="style" media="all">'];
+        }
+
+        $pageRenderer->expects($this->atLeastOnce())
+            ->method('getBodyContent')
+            ->willReturn('<!-- critical_css: below the fold -->')
+        ;
+
+        $pageRenderer->expects($this->once())
+            ->method('setBodyContent')
+            ->with($expectedBodyContent)
+        ;
+
+        $pageRenderer->expects($this->exactly(count($expectedHeaderData)))
+            ->method('addHeaderData')
+            ->withConsecutive(...$expectedHeaderData)
+        ;
+    }
+
     public function testFileMovement()
     {
         $params = [
@@ -61,17 +87,7 @@ class MoveCssHookTest extends UnitTestCase
         ];
 
         $pageRenderer = $this->createMock(PageRenderer::class);
-
-        $pageRenderer->expects($this->atLeastOnce())
-            ->method('getBodyContent')
-            ->willReturn('<!-- critical_css: below the fold -->')
-        ;
-
-        // the comment should be replaced
-        $pageRenderer->expects($this->once())
-            ->method('setBodyContent')
-            ->with("\n<style>@import url(\"typo3conf/ext/critical_css/Tests/Fixtures/Styles.css\") all;</style>")
-        ;
+        $this->assertStylesheets(['typo3conf/ext/critical_css/Tests/Fixtures/Styles.css'], $pageRenderer);
 
         $this->hook->postCssTransform($params, $pageRenderer);
         $this->assertEquals(['cssFiles' => []], $params);
@@ -97,17 +113,7 @@ class MoveCssHookTest extends UnitTestCase
         GeneralUtility::addInstance(Typo3CacheToPsr16Adapter::class, $this->createMock(Typo3CacheToPsr16Adapter::class));
 
         $pageRenderer = $this->createMock(PageRenderer::class);
-
-        $pageRenderer->expects($this->atLeastOnce())
-            ->method('getBodyContent')
-            ->willReturn('<!-- critical_css: below the fold -->')
-        ;
-
-        // the comment should be replaced
-        $pageRenderer->expects($this->once())
-            ->method('setBodyContent')
-            ->with("\n<style>@import url(\"http://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css\") all;</style>")
-        ;
+        $this->assertStylesheets(['http://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css'], $pageRenderer);
 
         $this->hook->postCssTransform($params, $pageRenderer);
         $this->assertEquals(['cssFiles' => []], $params);
@@ -123,20 +129,10 @@ class MoveCssHookTest extends UnitTestCase
         ];
 
         $pageRenderer = $this->createMock(PageRenderer::class);
-
-        $pageRenderer->expects($this->atLeastOnce())
-            ->method('getBodyContent')
-            ->willReturn('<!-- critical_css: below the fold -->')
-        ;
-
-        // the comment should be replaced
-        $pageRenderer->expects($this->once())
-            ->method('setBodyContent')
-            ->with(
-                "\n<style>@import url(\"typo3conf/ext/critical_css/Tests/Fixtures/Styles2.css\") all;</style>"
-                . "\n<style>@import url(\"typo3conf/ext/critical_css/Tests/Fixtures/Styles.css\") all;</style>"
-            )
-        ;
+        $this->assertStylesheets([
+            'typo3conf/ext/critical_css/Tests/Fixtures/Styles2.css',
+            'typo3conf/ext/critical_css/Tests/Fixtures/Styles.css',
+        ], $pageRenderer);
 
         $this->hook->postCssTransform($params, $pageRenderer);
         $this->assertEquals(['cssFiles' => []], $params);

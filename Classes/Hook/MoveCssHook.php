@@ -96,6 +96,10 @@ class MoveCssHook
             $filename = GeneralUtility::createVersionNumberedFilename($file['file']);
             $import = new Import(new URL(new CSSString($filename)), $file['media']);
             $inlineStyles .= "\n" . $cObject->wrap("<style>$import</style>", $file['allWrap'], $file['splitChar']);
+
+            $preloadLink = '<link rel="preload" href="' . htmlspecialchars($filename) . '" as="style" media="' . htmlspecialchars($file['media']) . '">';
+            $pageRenderer->addHeaderData($cObject->wrap($preloadLink, $file['allWrap'], $file['splitChar']));
+
             $pageRenderer->addCssInlineBlock($file['file'], $entry['inline'], false, false);
             unset($params[$entry['category']][$entry['categoryIndex']]);
         }
