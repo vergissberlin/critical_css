@@ -1,9 +1,23 @@
 tt_content.stdWrap.append = COA
 tt_content.stdWrap.append {
-    10 = TEXT
-    10.value = <!-- critical_css: below the fold -->
-    10.if.isFalse.data = REGISTER:critical_marker_rendered
+    10 = LOAD_REGISTER
+    10.critical_marker_opportunity {
+        cObject = TEXT
+        cObject.data = register:critical_marker_opportunity
+        cObject.wrap = |+1
+        prioriCalc = 1
+    }
 
-    20 = LOAD_REGISTER
-    20.critical_marker_rendered = 1
+    20 = TEXT
+    20.value = <!-- critical_css: below the fold -->
+    20.if.equals.data = register:critical_marker_opportunity
+    20.if.value = 2
+}
+
+# render the marker at the end of the page if it wasn't already rendered
+page.1544521777 = TEXT
+page.1544521777 {
+    if.isLessThan.data = register:critical_marker_opportunity
+    if.value = 2
+    value = <!-- critical_css: below the fold -->
 }
